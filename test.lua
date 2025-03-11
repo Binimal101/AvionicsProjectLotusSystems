@@ -1,4 +1,4 @@
-def init():
+function init():
     if(arming:is_armed()) then
        arming:disarm() 
     end
@@ -16,5 +16,5 @@ def init():
         print("Prearm checks not yet ready.")
     end
     arming:arm()
-    send_gpio()
+    send_gpio() 
 end
