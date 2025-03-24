@@ -6,45 +6,48 @@ function init()
     initial_position = ahrs:get_position()
     initial_home = ahrs:get_home()
     initial_alt = ahrs:get_hagl()
-    jork = 0
-
-    accel_list = {}
-    time_list = {}
+    jork = 0 --important
     
     deploy_flag_not_raised = true
-    jerk_threshold = -0.5 --test val
-     -- reading acceleration
-
-    -- JERK SHOULD BE CALLED EVERY <PERIOD> seconds, where this behavior is defined as a conditional block
-    -- within read loop to check time_delta < <PERIOD>
+    jork_threshold = -0.5 --test val TODO change with test
     
-
+    -- reading acceleration
+    
+    -- jork SHOULD BE CALLED EVERY <PERIOD> seconds, where this behavior is defined as a conditional block
+    -- within read loop to check time_delta < <PERIOD>
+    old_accel, old_time = 0, 0
     while deploy_flag_not_raised do
-        table.insert(accel_list, ahrs:get_accel())
-        table.insert(time_list, os.clock())
-        --print("(still accelerating upwards)")
+        
+        new_accel = ahrs:get_accel()
+        new_time = os.clock()
+        
+        -- When jork is negative past threshold, exit loop and begin the subsequent steps
+        jork = (new_accel - old_accel) / (new_time / old_time)
+        
+        if jork < jork_threshold then
+            deploy_flag_not_raised = false
         if end
+
+        old_accel = new_accel
+        old_time = new_time
+
     end
+    
     vehicle:set_mode(18) --throw mode
+    
     while !ahrs:prearm_healthy() do
         print("Prearm checks not yet ready.")
     end
+    
     arming:arm()
     send_gpio() 
 end
 
+function send_gpio()
+    -- https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Scripting/docs/docs.lua
 
--- Abiguous(?) of the direction of the axes for get_accel()
--- jerk = (a1-a2)/(t1-t2), t is os.clock()
-function jerk(accels, times)
-    local cals = {}
-    
-    -- take running rate of change measurement
-    for i = 0, accels.length - 1, 1 do
-        cals[i] = (accels[i + 1] - accels[i]) / (times[i + 1] - times[i])
-    end
-    
+    pin_number = -- TODO FIND PIN NUMBER FOR THE GPIO SECTION
+    gpio:pinMode(pin_number, 1) -- set pin to output mode
+    gpio:write(pin_number, 1) -- turn pin on 
 
-
-    
 end
