@@ -1,4 +1,9 @@
 function init()
+    
+    mavlink_msgs = require("modules/MAVLink/mavlink_msgs")
+    COMMAND_ACK_ID = mavlink_msgs.get_msgid("COMMAND_ACK")
+    COMMAND_LONG_ID = mavlink_msgs.get_msgid("COMMAND_LONG")
+
     if(arming:is_armed()) then
        arming:disarm() 
     end
