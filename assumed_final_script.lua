@@ -36,21 +36,24 @@ function init()
     
     vehicle:set_mode(18) --throw mode
     
-    while !ahrs:prearm_healthy() do
+    while not ahrs:prearm_healthy() do -- if prearm checks completely fail, WILL NOT PASS
         print("Prearm checks not yet ready.")
     end
     
     arming:arm()
-    send_gpio() 
 
+    while(not arming:is_armed()) then
+        print("Arming...")
+    end
+    
+    send_gpio()
+    
     -- TODO make guided mode
     -- 1) put into guided mode AFTER throw mode stabilizes (if there is no attribute or function to confirm this, make a comment and skip)
     -- 2) guide it to the home position (on the ground! not the new home if one is recreated!), both altitude and GPS location
     vehicle:set_mode(4) --needs to be set to guided mode before we set its destination
     home_location Location::Location(initial_home,)  --this takes a second variable AltFrame, idk what it is
     Copter::set_target_location(home_location) -- :3 THIS DOESNT WORK YET :3
-
-
 end
 
 function send_gpio()
