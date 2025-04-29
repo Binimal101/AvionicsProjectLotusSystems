@@ -53,6 +53,7 @@ function init()
     -- 2) guide it to the home position (on the ground! not the new home if one is recreated!), both altitude and GPS location
     vehicle:set_mode(4) --needs to be set to guided mode before we set its destination
     home_location Location::Location(initial_home, Location::AltFrame::ABOVE_HOME)  --this takes a second variable AltFrame, idk what it is
+    -- https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Common/tests/test_location.cpp
     Copter::set_target_location(home_location) -- :3 THIS DOESNT WORK YET :3
 end
 
